@@ -32,7 +32,7 @@ FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
 	// create a SdkManager
 	FbxManager* lSdkManager = FbxManager::Create();
 	FbxIOSettings* ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
-	FbxScene* lScene = FbxScene::Create(lSdkManager, "");
+	m_scene = FbxScene::Create(lSdkManager, "");
 	FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
 
 	FbxMemoryStream memory_stream(lSdkManager, data, data_size);
@@ -43,7 +43,7 @@ FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
 		printf("error1");
 	//return -1;
 // import the scene.
-	if (!lImporter->Import(lScene))
+	if (!lImporter->Import(m_scene))
 		printf("error1");
 	//return -1;
 // destroy the importer.
@@ -51,6 +51,18 @@ FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
 
 	//return 0;
 }
+
+FbxLoader::~FbxLoader()
+{
+	if (m_scene != nullptr)
+		m_scene->Destroy();
+}
+
+FbxScene* FbxLoader::scene() const
+{
+	return m_scene;
+}
+
 	/* 
 	from engine:
 	TriangleMeshData* data = new TriangleMeshData(gi, MeshParameters::STATIC_DATA);

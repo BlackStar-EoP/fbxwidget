@@ -26,13 +26,19 @@ SOFTWARE.
 
 #include <QTreeWidget>
 
+#include <fbxsdk.h>
+
 #include <stdint.h>
+
+class FbxLoader;
 
 class FBXTreeWidget : public QTreeWidget
 {
 public:
+	void parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNode* root_node);
 	void give_fbx_data(const QString& filename, uint8_t* data, size_t size);
 
 private:
 	uint8_t* m_fbx_data = nullptr;
+	FbxLoader* m_fbx_loader = nullptr;
 };

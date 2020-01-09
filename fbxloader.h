@@ -33,4 +33,10 @@ class FbxLoader
 {
 public:
 	FbxLoader(uint8_t* data, size_t data_size);
+	~FbxLoader();
+
+	FbxScene* scene() const;
+
+private:
+	FbxScene* m_scene = nullptr;
 };
