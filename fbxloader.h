@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 MIT License
 
@@ -22,13 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "fbxtreewidget.h"
-#include "fbxloader.h"
+#include <stdint.h>
+#include <fbxsdk.h>
 
-void FBXTreeWidget::give_fbx_data(const QString& filename, uint8_t* data, size_t size)
+class FbxMemoryStream;
+
+class FbxLoader
 {
-	delete[] m_fbx_data;
-	m_fbx_data = data;
-	FbxLoader loader(data, size);
-}
-
+public:
+	FbxLoader(uint8_t* data, size_t data_size);
+};

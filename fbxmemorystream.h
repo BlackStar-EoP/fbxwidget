@@ -48,7 +48,7 @@ public:
 	void 	ClearError() override;
 
 private:
-	long m_stream_position = 0;
+	mutable long m_stream_position = 0;
 	uint8_t* m_data = nullptr;
 	size_t m_data_size = 0;
 	int32_t m_reader_ID = -1;

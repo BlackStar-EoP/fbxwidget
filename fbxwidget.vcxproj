@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Widgets.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Gui.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>&quot;C:\Program Files\Autodesk\fbx\FBX SDK\2019.0\lib\vs2015\x64\debug\libfbxsdk.lib&quot;;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Widgets.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Gui.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -114,7 +114,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Widgetsd.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Guid.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>&quot;C:\Program Files\Autodesk\fbx\FBX SDK\2019.0\lib\vs2015\x64\debug\libfbxsdk.lib&quot;;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Widgetsd.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Guid.lib;C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Qt\Qt5.9.3\5.9.3\msvc2017_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -135,12 +135,14 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fbxloader.cpp" />
     <ClCompile Include="fbxmemorystream.cpp" />
     <ClCompile Include="fbxtreewidget.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fbxloader.h" />
     <ClInclude Include="fbxmemorystream.h" />
     <ClInclude Include="fbxtreewidget.h" />
     <ClInclude Include="mainwindow.h" />

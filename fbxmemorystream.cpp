@@ -30,6 +30,7 @@ FbxMemoryStream::FbxMemoryStream(FbxManager* pSdkManager, uint8_t* data, size_t 
 {
 	const char* format = "FBX (*.fbx)";
 	m_reader_ID = pSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription(format);
+	printf("");
 }
 
 FbxStream::EState FbxMemoryStream::GetState()
@@ -71,11 +72,15 @@ int32_t FbxMemoryStream::Read(void *pData, int32_t pSize) const
 	{
 		int32_t readsize = m_data_size - m_stream_position - 1;
 		if (readsize > 0)
+		{
 			memcpy(pData, m_data + m_stream_position, readsize);
+			m_stream_position += readsize;
+		}
 		return readsize;
 	}
 
 	memcpy(pData, m_data + m_stream_position, pSize);
+	m_stream_position += pSize;
 	return pSize;
 }
 
@@ -99,7 +104,7 @@ void FbxMemoryStream::Seek(const FbxInt64 &pOffset, const FbxFile::ESeekPos &pSe
 	switch (pSeekPos)
 	{
 	case FbxFile::eBegin:
-		m_stream_position = 0;
+		m_stream_position = pOffset;
 		//fseek(mFile, (long)pOffset, SEEK_SET);
 		break;
 	case FbxFile::eCurrent:
