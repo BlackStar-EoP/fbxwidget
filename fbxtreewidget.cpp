@@ -23,9 +23,13 @@ SOFTWARE.
 */
 
 #include "fbxtreewidget.h"
+#include "fbxmemorystream.h"
 
 void FBXTreeWidget::give_fbx_data(const QString& filename, uint8_t* data, size_t size)
 {
 	delete[] data;
 	m_fbx_data = data;
+
+	FbxMemoryStream stream(data);
+	
 }

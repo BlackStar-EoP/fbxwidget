@@ -27,6 +27,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="fbxmemorystream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="fbxtreewidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,6 +41,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fbxmemorystream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="fbxtreewidget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
