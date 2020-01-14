@@ -25,14 +25,65 @@ SOFTWARE.
 #include "fbxtreewidget.h"
 #include "fbxloader.h"
 
+FBXTreeWidget::FBXTreeWidget()
+{
+	setColumnCount(2);
+
+	QTreeWidgetItem *HeaderItem = headerItem();
+
+	HeaderItem->setText(0, "Node name");
+	HeaderItem->setText(1, "Node type");
+}
+
 void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNode* root_node)
 {
 	int32_t childcount = root_node->GetChildCount();
 	for (int32_t i = 0; i < childcount; ++i)
 	{
 		fbxsdk::FbxNode* child = root_node->GetChild(i);
+
+		int32_t node_attribute_count = child->GetNodeAttributeCount();
+
 		QTreeWidgetItem* child_widget_item = new QTreeWidgetItem();
 		child_widget_item->setText(0, child->GetName());
+
+		if (node_attribute_count == 0)
+			printf("");
+
+		QString attribute_type_name = "";
+		for (int32_t attr = 0; attr < node_attribute_count; ++attr)
+		{
+			const fbxsdk::FbxNodeAttribute* node_attribute = child->GetNodeAttributeByIndex(attr);
+			fbxsdk::FbxNodeAttribute::EType attr_type = node_attribute->GetAttributeType();
+			switch (attr_type)
+			{
+			case fbxsdk::FbxNodeAttribute::eUnknown: attribute_type_name = "eUnknown"; break;
+			case fbxsdk::FbxNodeAttribute::eNull: attribute_type_name = "eNull"; break;
+			case fbxsdk::FbxNodeAttribute::eMarker: attribute_type_name = "eMarker"; break;
+			case fbxsdk::FbxNodeAttribute::eSkeleton: attribute_type_name = "eSkeleton"; break;
+			case fbxsdk::FbxNodeAttribute::eMesh: attribute_type_name = "eMesh"; break;
+			case fbxsdk::FbxNodeAttribute::eNurbs: attribute_type_name = "eNurbs"; break;
+			case fbxsdk::FbxNodeAttribute::ePatch: attribute_type_name = "ePatch"; break;
+			case fbxsdk::FbxNodeAttribute::eCamera: attribute_type_name = "eCamera"; break;
+			case fbxsdk::FbxNodeAttribute::eCameraStereo: attribute_type_name = "eCameraStereo"; break;
+			case fbxsdk::FbxNodeAttribute::eCameraSwitcher: attribute_type_name = "eCameraSwitcher"; break;
+			case fbxsdk::FbxNodeAttribute::eLight: attribute_type_name = "eLight"; break;
+			case fbxsdk::FbxNodeAttribute::eOpticalReference: attribute_type_name = "eOpticalReference"; break;
+			case fbxsdk::FbxNodeAttribute::eOpticalMarker: attribute_type_name = "eOpticalMarker"; break;
+			case fbxsdk::FbxNodeAttribute::eNurbsCurve: attribute_type_name = "eNurbsCurve"; break;
+			case fbxsdk::FbxNodeAttribute::eTrimNurbsSurface: attribute_type_name = "eTrimNurbsSurface"; break;
+			case fbxsdk::FbxNodeAttribute::eBoundary: attribute_type_name = "eBoundary"; break;
+			case fbxsdk::FbxNodeAttribute::eNurbsSurface: attribute_type_name = "eNurbsSurface"; break;
+			case fbxsdk::FbxNodeAttribute::eShape: attribute_type_name = "eShape"; break;
+			case fbxsdk::FbxNodeAttribute::eLODGroup: attribute_type_name = "eLODGroup"; break;
+			case fbxsdk::FbxNodeAttribute::eSubDiv: attribute_type_name = "eSubDiv"; break;
+			case fbxsdk::FbxNodeAttribute::eCachedEffect: attribute_type_name = "eCachedEffect"; break;
+			case fbxsdk::FbxNodeAttribute::eLine: attribute_type_name = "eLine"; break;
+			}
+		}
+
+		child_widget_item->setText(1, attribute_type_name);
+
 		root_widget_item->addChild(child_widget_item);
 		if (child->GetChildCount() > 0)
 			parse_nodes(child_widget_item, child);

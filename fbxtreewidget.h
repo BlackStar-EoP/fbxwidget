@@ -35,6 +35,8 @@ class FbxLoader;
 class FBXTreeWidget : public QTreeWidget
 {
 public:
+	FBXTreeWidget();
+
 	void parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNode* root_node);
 	void give_fbx_data(const QString& filename, uint8_t* data, size_t size);
 
