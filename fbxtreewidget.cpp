@@ -50,6 +50,17 @@ void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNo
 		if (node_attribute_count == 0)
 			printf("");
 
+		int32_t material_count = child->GetMaterialCount();
+		for (int32_t mat = 0; mat < material_count; ++mat)
+		{
+			fbxsdk::FbxSurfaceMaterial* material = child->GetMaterial(mat);
+			QString material_name = material->GetName();
+			QTreeWidgetItem* material_widget_item = new QTreeWidgetItem();
+			material_widget_item->setText(0, material_name);
+			child_widget_item->addChild(material_widget_item);
+			
+		}
+
 		QString attribute_type_name = "";
 		for (int32_t attr = 0; attr < node_attribute_count; ++attr)
 		{
