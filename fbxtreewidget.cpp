@@ -72,7 +72,32 @@ void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNo
 			case fbxsdk::FbxNodeAttribute::eNull: attribute_type_name = "eNull"; break;
 			case fbxsdk::FbxNodeAttribute::eMarker: attribute_type_name = "eMarker"; break;
 			case fbxsdk::FbxNodeAttribute::eSkeleton: attribute_type_name = "eSkeleton"; break;
-			case fbxsdk::FbxNodeAttribute::eMesh: attribute_type_name = "eMesh"; break;
+			case fbxsdk::FbxNodeAttribute::eMesh: 
+			{
+				const fbxsdk::FbxMesh* mesh = static_cast<const fbxsdk::FbxMesh*>(node_attribute);
+				attribute_type_name = "eMesh ";
+				int32_t polygoncount = mesh->GetPolygonCount();
+				attribute_type_name += "Polygons: " + QString::number(polygoncount);
+				int32_t tris = 0;
+				int32_t quads = 0;
+				int32_t ngons = 0;
+				for (int32_t p = 0; p < polygoncount; ++p)
+				{
+					int32_t polygonsize = mesh->GetPolygonSize(p);
+					if (polygonsize < 3)
+						printf("");
+					else if (polygonsize == 3)
+						tris++;
+					else if (polygonsize == 4)
+						quads++;
+					else
+						ngons++;
+				}
+				attribute_type_name += " Tris: " + QString::number(tris) + QString(" Quads: ") + QString::number(quads) +
+					QString(" Ngons : ") + QString::number(ngons);
+				break;
+			}
+
 			case fbxsdk::FbxNodeAttribute::eNurbs: attribute_type_name = "eNurbs"; break;
 			case fbxsdk::FbxNodeAttribute::ePatch: attribute_type_name = "ePatch"; break;
 			case fbxsdk::FbxNodeAttribute::eCamera: attribute_type_name = "eCamera"; break;
@@ -111,7 +136,8 @@ void FBXTreeWidget::give_fbx_data(const QString& filename, uint8_t* data, size_t
 	delete m_fbx_loader;
 	m_fbx_loader = new FbxLoader(data, size);
 
-	FbxScene* scene = m_fbx_loader->scene();
+	fbxsdk::FbxScene* scene = m_fbx_loader->scene();
+
 	fbxsdk::FbxNode* root_node = scene->GetRootNode();
 	QTreeWidgetItem* root_widget_item = new QTreeWidgetItem(this);
 	root_widget_item->setText(0, root_node->GetName());
