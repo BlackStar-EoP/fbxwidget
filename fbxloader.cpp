@@ -51,15 +51,15 @@ FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
 
 	//return 0;
 
-	fbxsdk::FbxGeometryConverter converter(lSdkManager);
-	converter.Triangulate(m_scene, true);
+	//fbxsdk::FbxGeometryConverter converter(lSdkManager);
+	//converter.Triangulate(m_scene, true);
 
-	/// export test
-	//// create an exporter.
+	///// export test
+	////// create an exporter.
 	//FbxExporter* lExporter = FbxExporter::Create(lSdkManager, "");
 
 	//// initialize the exporter by providing a filename and the IOSettings to use
-	//lExporter->Initialize("delorean_triangulated.fbx", -1, ios);
+	//lExporter->Initialize("teapot_triangulated.fbx", -1, ios);
 
 	//// export the scene.
 	//lExporter->Export(m_scene);
