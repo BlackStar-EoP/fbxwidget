@@ -25,7 +25,8 @@ SOFTWARE.
 #include "fbxtreewidget.h"
 #include "fbxloader.h"
 
-FBXTreeWidget::FBXTreeWidget()
+FBXTreeWidget::FBXTreeWidget(QWidget* parent)
+: QTreeWidget(parent)
 {
 	setColumnCount(2);
 
@@ -74,27 +75,25 @@ void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNo
 			case fbxsdk::FbxNodeAttribute::eSkeleton: attribute_type_name = "eSkeleton"; break;
 			case fbxsdk::FbxNodeAttribute::eMesh: 
 			{
+				m_num_meshes++;
 				const fbxsdk::FbxMesh* mesh = static_cast<const fbxsdk::FbxMesh*>(node_attribute);
 				attribute_type_name = "eMesh ";
 				int32_t polygoncount = mesh->GetPolygonCount();
 				attribute_type_name += "Polygons: " + QString::number(polygoncount);
-				int32_t tris = 0;
-				int32_t quads = 0;
-				int32_t ngons = 0;
 				for (int32_t p = 0; p < polygoncount; ++p)
 				{
 					int32_t polygonsize = mesh->GetPolygonSize(p);
 					if (polygonsize < 3)
-						printf("");
+						throw new std::runtime_error("Polygon size in mesh is less than 3!");
 					else if (polygonsize == 3)
-						tris++;
+						m_num_triangles++;
 					else if (polygonsize == 4)
-						quads++;
+						m_num_quads++;
 					else
-						ngons++;
+						m_num_ngons++;
 				}
-				attribute_type_name += " Tris: " + QString::number(tris) + QString(" Quads: ") + QString::number(quads) +
-					QString(" Ngons : ") + QString::number(ngons);
+				attribute_type_name += " Tris: " + QString::number(m_num_triangles) + QString(" Quads: ") + QString::number(m_num_quads) +
+					QString(" Ngons : ") + QString::number(m_num_ngons);
 				break;
 			}
 
@@ -129,6 +128,11 @@ void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNo
 
 void FBXTreeWidget::give_fbx_data(const QString& filename, uint8_t* data, size_t size)
 {
+	m_num_meshes = 0;
+	m_num_triangles = 0;
+	m_num_quads = 0;
+	m_num_ngons = 0;
+	
 	clear();
 
 	delete[] m_fbx_data;
@@ -145,3 +149,46 @@ void FBXTreeWidget::give_fbx_data(const QString& filename, uint8_t* data, size_t
 	parse_nodes(root_widget_item, root_node);
 }
 
+void FBXTreeWidget::parse_fbx_data(const QByteArray& data)
+{
+	m_num_meshes = 0;
+	m_num_triangles = 0;
+	m_num_quads = 0;
+	m_num_ngons = 0;
+
+	clear();
+	delete m_fbx_loader;
+	m_fbx_loader = new FbxLoader((uint8_t*)data.constData(), data.length());
+	fbxsdk::FbxScene* scene = m_fbx_loader->scene();
+
+	fbxsdk::FbxNode* root_node = scene->GetRootNode();
+	QTreeWidgetItem* root_widget_item = new QTreeWidgetItem(this);
+	root_widget_item->setText(0, root_node->GetName());
+
+	parse_nodes(root_widget_item, root_node);
+}
+
+uint32_t FBXTreeWidget::num_meshes() const
+{
+	return m_num_meshes;
+}
+
+uint32_t FBXTreeWidget::num_triangles() const
+{
+	return m_num_triangles;
+}
+
+uint32_t FBXTreeWidget::num_quads() const
+{
+	return m_num_quads;
+}
+uint32_t FBXTreeWidget::num_ngons() const
+{
+	return m_num_ngons;
+}
+
+bool FBXTreeWidget::needs_triangulation() const
+{
+	return m_num_quads > 0 ||
+		   m_num_ngons > 0;
+}
