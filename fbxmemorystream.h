@@ -27,10 +27,20 @@ SOFTWARE.
 #include <stdint.h>
 #include <fbxsdk.h>
 
+#include <QVector>
+
 class FbxMemoryStream : public FbxStream
 {
 public:
-	FbxMemoryStream(FbxManager* pSdkManager, uint8_t* data, size_t data_size);
+	enum EMemoryStreamType
+	{
+		READ,
+		WRITE
+	};
+
+public:
+	FbxMemoryStream(fbxsdk::FbxManager* pSdkManager);
+	FbxMemoryStream(fbxsdk::FbxManager* pSdkManager, uint8_t* data, size_t data_size);
 
 	EState 	GetState() override;
 	bool 	Open(void *pStreamData) override;
@@ -52,6 +62,10 @@ private:
 	uint8_t* m_data = nullptr;
 	size_t m_data_size = 0;
 	int32_t m_reader_ID = -1;
+	int32_t m_writer_ID = -1;
+
+	QVector<uint8_t> m_write_data;
+	EMemoryStreamType m_stream_type = READ;
 };
 
 /****************************************************************************************

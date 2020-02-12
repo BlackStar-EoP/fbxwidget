@@ -192,3 +192,9 @@ bool FBXTreeWidget::needs_triangulation() const
 	return m_num_quads > 0 ||
 		   m_num_ngons > 0;
 }
+
+QByteArray FBXTreeWidget::triangulated_fbx()
+{
+	m_fbx_loader->triangulate();
+	return QByteArray();
+}

@@ -36,7 +36,11 @@ public:
 	~FbxLoader();
 
 	FbxScene* scene() const;
+	void triangulate();
 
 private:
 	FbxScene* m_scene = nullptr;
+
+	FbxManager* m_fbx_manager = nullptr;
+	FbxIOSettings* m_fbx_io_settings = nullptr;
 };

@@ -30,16 +30,16 @@ SOFTWARE.
 FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
 {
 	// create a SdkManager
-	FbxManager* lSdkManager = FbxManager::Create();
-	FbxIOSettings* ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
-	m_scene = FbxScene::Create(lSdkManager, "");
-	FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
+	m_fbx_manager = FbxManager::Create();
+	m_fbx_io_settings = FbxIOSettings::Create(m_fbx_manager, IOSROOT);
+	m_scene = FbxScene::Create(m_fbx_manager, "");
+	FbxImporter* lImporter = FbxImporter::Create(m_fbx_manager, "");
 
-	FbxMemoryStream memory_stream(lSdkManager, data, data_size);
+	FbxMemoryStream memory_stream(m_fbx_manager, data, data_size);
 
 	void* streamData = NULL;
 	// initialize the importer with a stream
-	if (!lImporter->Initialize(&memory_stream, NULL, -1, ios))
+	if (!lImporter->Initialize(&memory_stream, NULL, -1, m_fbx_io_settings))
 		printf("error1");
 	//return -1;
 // import the scene.
@@ -50,35 +50,41 @@ FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
 	lImporter->Destroy();
 
 	//return 0;
-
-	//fbxsdk::FbxGeometryConverter converter(lSdkManager);
-	//converter.Triangulate(m_scene, true);
-
-	///// export test
-	////// create an exporter.
-	//FbxExporter* lExporter = FbxExporter::Create(lSdkManager, "");
-
-	//// initialize the exporter by providing a filename and the IOSettings to use
-	//lExporter->Initialize("teapot_triangulated.fbx", -1, ios);
-
-	//// export the scene.
-	//lExporter->Export(m_scene);
-
-	//// destroy the exporter
-	//lExporter->Destroy();
-
-
 }
 
 FbxLoader::~FbxLoader()
 {
 	if (m_scene != nullptr)
 		m_scene->Destroy();
+
+	m_fbx_manager->Destroy();
+	m_fbx_io_settings->Destroy();
 }
 
 FbxScene* FbxLoader::scene() const
 {
 	return m_scene;
+}
+
+void FbxLoader::triangulate()
+{
+	fbxsdk::FbxGeometryConverter converter(m_fbx_manager);
+	converter.Triangulate(m_scene, true);
+
+	/// export test
+	//// create an exporter.
+	FbxExporter* lExporter = FbxExporter::Create(m_fbx_manager, "");
+
+	//// initialize the exporter by providing a filename and the IOSettings to use
+	//lExporter->Initialize("teapot_triangulated.fbx", -1, m_fbx_io_settings);
+	FbxMemoryStream outputStream(m_fbx_manager);
+	bool succes = lExporter->Initialize(&outputStream, nullptr, -1, m_fbx_io_settings);
+
+	// export the scene.
+	bool exports = lExporter->Export(m_scene);
+	auto kut = lExporter->GetStatus();
+	// destroy the exporter
+	lExporter->Destroy();
 }
 
 	/* 

@@ -48,6 +48,7 @@ public:
 	uint32_t num_ngons() const;
 
 	bool needs_triangulation() const;
+	QByteArray triangulated_fbx();
 
 private:
 	uint8_t* m_fbx_data = nullptr;

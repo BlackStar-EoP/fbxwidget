@@ -24,23 +24,32 @@ SOFTWARE.
 
 #include "fbxmemorystream.h"
 
-FbxMemoryStream::FbxMemoryStream(FbxManager* pSdkManager, uint8_t* data, size_t data_size)
+FbxMemoryStream::FbxMemoryStream(fbxsdk::FbxManager* pSdkManager)
+: m_stream_type(WRITE)
+{
+	const char* format = "FBX (*.fbx)";
+	m_writer_ID = pSdkManager->GetIOPluginRegistry()->FindWriterIDByDescription(format);
+}
+
+FbxMemoryStream::FbxMemoryStream(fbxsdk::FbxManager* pSdkManager, uint8_t* data, size_t data_size)
 : m_data(data)
 , m_data_size(data_size)
+, m_stream_type(READ)
 {
 	const char* format = "FBX (*.fbx)";
 	m_reader_ID = pSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription(format);
-	printf("");
 }
 
 FbxStream::EState FbxMemoryStream::GetState()
 {
-	if (m_data == nullptr)
-		return FbxStream::eClosed;
+	if (m_stream_type == READ)
+	{
+		if (m_data == nullptr)
+			return FbxStream::eClosed;
 
-	if (m_data_size == 0)
-		return FbxStream::eEmpty;
-
+		if (m_data_size == 0)
+			return FbxStream::eEmpty;
+	}
 	return eOpen;
 }
 
@@ -63,7 +72,13 @@ bool FbxMemoryStream::Flush()
 
 int32_t FbxMemoryStream::Write(const void *pData, int32_t pSize)
 {
-	return 0;
+	const uint8_t* writebuffer = static_cast<const uint8_t*>(pData);
+	for (int32_t i = 0; i < pSize; ++i)
+	{
+		m_write_data.push_back(writebuffer[i]);
+	}
+	m_stream_position += pSize;
+	return pSize;
 }
 
 int32_t FbxMemoryStream::Read(void *pData, int32_t pSize) const
@@ -96,7 +111,7 @@ int32_t	FbxMemoryStream::GetReaderID() const
 
 int32_t FbxMemoryStream::GetWriterID() const
 {
-	return -1;
+	return m_writer_ID;
 }
 
 void FbxMemoryStream::Seek(const FbxInt64 &pOffset, const FbxFile::ESeekPos &pSeekPos)
