@@ -27,8 +27,7 @@ SOFTWARE.
 FbxMemoryStream::FbxMemoryStream(fbxsdk::FbxManager* pSdkManager)
 : m_stream_type(WRITE)
 {
-	const char* format = "FBX (*.fbx)";
-	m_writer_ID = pSdkManager->GetIOPluginRegistry()->FindWriterIDByDescription(format);
+	m_writer_ID = pSdkManager->GetIOPluginRegistry()->FindWriterIDByExtension("FBX");
 }
 
 FbxMemoryStream::FbxMemoryStream(fbxsdk::FbxManager* pSdkManager, uint8_t* data, size_t data_size)
@@ -36,8 +35,7 @@ FbxMemoryStream::FbxMemoryStream(fbxsdk::FbxManager* pSdkManager, uint8_t* data,
 , m_data_size(data_size)
 , m_stream_type(READ)
 {
-	const char* format = "FBX (*.fbx)";
-	m_reader_ID = pSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription(format);
+	m_reader_ID = pSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX (*.fbx)");
 }
 
 FbxStream::EState FbxMemoryStream::GetState()
@@ -62,6 +60,14 @@ bool FbxMemoryStream::Open(void *pStreamData)
 bool FbxMemoryStream::Close()
 {
 	m_stream_position = 0;
+	if (m_stream_type == WRITE)
+	{
+		m_data = new uint8_t[m_write_data.size()];
+		m_data_size = m_write_data.size();
+		memcpy(m_data, &m_write_data[0], m_data_size);
+		m_write_data.clear();
+	}
+
 	return true;
 }
 
@@ -99,11 +105,6 @@ int32_t FbxMemoryStream::Read(void *pData, int32_t pSize) const
 	return pSize;
 }
 
-//char* FbxMemoryStream::ReadString(char *pBuffer, int32_t pMaxSize, bool pStopAtFirstWhiteSpace = false)
-//{
-//
-//}
-
 int32_t	FbxMemoryStream::GetReaderID() const
 {
 	return m_reader_ID;
@@ -120,15 +121,13 @@ void FbxMemoryStream::Seek(const FbxInt64 &pOffset, const FbxFile::ESeekPos &pSe
 	{
 	case FbxFile::eBegin:
 		m_stream_position = pOffset;
-		//fseek(mFile, (long)pOffset, SEEK_SET);
 		break;
+
 	case FbxFile::eCurrent:
-		//fseek(mFile, (long)pOffset, SEEK_CUR);
 		m_stream_position += pOffset;
 		break;
+
 	case FbxFile::eEnd:
-		m_stream_position = m_data_size - 1;
-		//fseek(mFile, (long)pOffset, SEEK_END);
 		break;
 	}
 
@@ -154,4 +153,14 @@ int32_t FbxMemoryStream::GetError() const
 void FbxMemoryStream::ClearError()
 {
 
+}
+
+uint8_t* FbxMemoryStream::data()
+{
+	return m_data;
+}
+
+size_t FbxMemoryStream::data_size() const
+{
+	return m_data_size;
 }

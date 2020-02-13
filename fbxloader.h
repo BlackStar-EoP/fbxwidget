@@ -36,7 +36,7 @@ public:
 	~FbxLoader();
 
 	FbxScene* scene() const;
-	void triangulate();
+	uint8_t* triangulate(size_t& data_size);
 
 private:
 	FbxScene* m_scene = nullptr;
