@@ -27,62 +27,58 @@ SOFTWARE.
 
 #pragma comment(lib, "libfbxsdk.lib")
 
-FbxLoader::FbxLoader(uint8_t* data, size_t data_size)
+FbxLoader::FbxLoader()
 {
 	// create a SdkManager
 	m_fbx_manager = FbxManager::Create();
 	m_fbx_io_settings = FbxIOSettings::Create(m_fbx_manager, IOSROOT);
-	m_scene = FbxScene::Create(m_fbx_manager, "");
-	FbxImporter* lImporter = FbxImporter::Create(m_fbx_manager, "");
-
-	FbxMemoryStream memory_stream(m_fbx_manager, data, data_size);
-
-	void* streamData = NULL;
-	// initialize the importer with a stream
-	if (!lImporter->Initialize(&memory_stream, NULL, -1, m_fbx_io_settings))
-		printf("error1");
-	//return -1;
-// import the scene.
-	if (!lImporter->Import(m_scene))
-		printf("error1");
-	//return -1;
-// destroy the importer.
-	lImporter->Destroy();
-
-	//return 0;
+	m_importer = FbxImporter::Create(m_fbx_manager, "");
 }
 
 FbxLoader::~FbxLoader()
 {
-	if (m_scene != nullptr)
-		m_scene->Destroy();
-
 	m_fbx_manager->Destroy();
 	m_fbx_io_settings->Destroy();
+	m_importer->Destroy();
+	m_exporter->Destroy();
 }
 
-FbxScene* FbxLoader::scene() const
+FbxScene* FbxLoader::import_from_memory(uint8_t* data, size_t data_size)
 {
-	return m_scene;
+	FbxScene* scene = FbxScene::Create(m_fbx_manager, "MemoryImporter");
+	
+
+	FbxMemoryStream memory_stream(m_fbx_manager, data, data_size);
+
+	void* streamData = nullptr;
+	if (!m_importer->Initialize(&memory_stream, nullptr, -1, m_fbx_io_settings))
+	{
+		scene->Destroy();
+		return nullptr;
+	}
+
+	if (!m_importer->Import(scene))
+	{
+		scene->Destroy();
+		return nullptr;
+	}
 }
 
-uint8_t* FbxLoader::triangulate(size_t& data_size)
+bool FbxLoader::triangulate(FbxScene* scene)
 {
 	fbxsdk::FbxGeometryConverter converter(m_fbx_manager);
-	converter.Triangulate(m_scene, true);
+	return converter.Triangulate(scene, true);
+}
 
-	/// export test
-	//// create an exporter.
-	FbxExporter* lExporter = FbxExporter::Create(m_fbx_manager, "MemoryExporter");
+uint8_t* FbxLoader::export_to_memory(FbxScene* scene, size_t& data_size)
+{
+	m_exporter = FbxExporter::Create(m_fbx_manager, "MemoryExporter");
 
-	//// initialize the exporter by providing a filename and the IOSettings to use
 	FbxMemoryStream outputStream(m_fbx_manager);
-	bool succes = lExporter->Initialize(&outputStream, nullptr, -1, m_fbx_io_settings);
+	bool succes = m_exporter->Initialize(&outputStream, nullptr, -1, m_fbx_io_settings);
 
-	// export the scene.
-	succes = lExporter->Export(m_scene);
-	// destroy the exporter
-	lExporter->Destroy();
+	succes = m_exporter->Export(scene);
+	
 	data_size = outputStream.data_size();
 	return outputStream.data();
 }

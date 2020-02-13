@@ -36,6 +36,11 @@ FBXTreeWidget::FBXTreeWidget(QWidget* parent)
 	HeaderItem->setText(1, "Node type");
 }
 
+
+FBXTreeWidget::~FBXTreeWidget()
+{
+}
+
 void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNode* root_node)
 {
 	int32_t childcount = root_node->GetChildCount();
@@ -126,30 +131,7 @@ void FBXTreeWidget::parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNo
 
 }
 
-void FBXTreeWidget::give_fbx_data(const QString& filename, uint8_t* data, size_t size)
-{
-	m_num_meshes = 0;
-	m_num_triangles = 0;
-	m_num_quads = 0;
-	m_num_ngons = 0;
-	
-	clear();
-
-	delete[] m_fbx_data;
-	m_fbx_data = data;
-	delete m_fbx_loader;
-	m_fbx_loader = new FbxLoader(data, size);
-
-	fbxsdk::FbxScene* scene = m_fbx_loader->scene();
-
-	fbxsdk::FbxNode* root_node = scene->GetRootNode();
-	QTreeWidgetItem* root_widget_item = new QTreeWidgetItem(this);
-	root_widget_item->setText(0, root_node->GetName());
-
-	parse_nodes(root_widget_item, root_node);
-}
-
-void FBXTreeWidget::parse_fbx_data(const QByteArray& data)
+void FBXTreeWidget::parse_fbx_scene(FbxScene* scene)
 {
 	m_num_meshes = 0;
 	m_num_triangles = 0;
@@ -157,9 +139,6 @@ void FBXTreeWidget::parse_fbx_data(const QByteArray& data)
 	m_num_ngons = 0;
 
 	clear();
-	delete m_fbx_loader;
-	m_fbx_loader = new FbxLoader((uint8_t*)data.constData(), data.length());
-	fbxsdk::FbxScene* scene = m_fbx_loader->scene();
 
 	fbxsdk::FbxNode* root_node = scene->GetRootNode();
 	QTreeWidgetItem* root_widget_item = new QTreeWidgetItem(this);
@@ -193,7 +172,7 @@ bool FBXTreeWidget::needs_triangulation() const
 		   m_num_ngons > 0;
 }
 
-uint8_t* FBXTreeWidget::triangulated_fbx(size_t& fbx_size)
+FbxLoader& FBXTreeWidget::fbx_loader()
 {
-	return m_fbx_loader->triangulate(fbx_size);
+	return m_fbx_loader;
 }

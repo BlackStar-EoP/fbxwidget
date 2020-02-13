@@ -32,15 +32,17 @@ class FbxMemoryStream;
 class FbxLoader
 {
 public:
-	FbxLoader(uint8_t* data, size_t data_size);
+	FbxLoader();
 	~FbxLoader();
 
-	FbxScene* scene() const;
-	uint8_t* triangulate(size_t& data_size);
+	FbxScene* import_from_memory(uint8_t* data, size_t data_size);
+
+	bool triangulate(FbxScene* scene);
+	uint8_t* export_to_memory(FbxScene* scene, size_t& data_size);
 
 private:
-	FbxScene* m_scene = nullptr;
-
 	FbxManager* m_fbx_manager = nullptr;
 	FbxIOSettings* m_fbx_io_settings = nullptr;
+	FbxImporter* m_importer = nullptr;
+	FbxExporter* m_exporter = nullptr;
 };

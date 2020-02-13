@@ -29,6 +29,7 @@ SOFTWARE.
 #include <fbxsdk.h>
 
 #include <stdint.h>
+#include "fbxloader.h"
 
 class QByteArray;
 class FbxLoader;
@@ -37,10 +38,10 @@ class FBXTreeWidget : public QTreeWidget
 {
 public:
 	FBXTreeWidget(QWidget* parent);
+	~FBXTreeWidget();
 
 	void parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNode* root_node);
-	void give_fbx_data(const QString& filename, uint8_t* data, size_t size);
-	void parse_fbx_data(const QByteArray& data);
+	void parse_fbx_scene(FbxScene* scene);
 
 	uint32_t num_meshes() const;
 	uint32_t num_triangles() const;
@@ -48,11 +49,10 @@ public:
 	uint32_t num_ngons() const;
 
 	bool needs_triangulation() const;
-	uint8_t* triangulated_fbx(size_t& fbx_size);
+	FbxLoader& fbx_loader();
 
 private:
-	uint8_t* m_fbx_data = nullptr;
-	FbxLoader* m_fbx_loader = nullptr;
+	FbxLoader m_fbx_loader;
 
 	uint32_t m_num_meshes = 0;
 	uint32_t m_num_triangles = 0;
