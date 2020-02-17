@@ -41,7 +41,7 @@ public:
 	~FBXTreeWidget();
 
 	void parse_nodes(QTreeWidgetItem* root_widget_item, fbxsdk::FbxNode* root_node);
-	void parse_fbx_scene(FbxScene* scene);
+	fbxsdk::FbxScene* parse_fbx_scene(uint8_t* data, size_t data_size);
 
 	uint32_t num_meshes() const;
 	uint32_t num_triangles() const;

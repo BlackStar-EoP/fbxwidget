@@ -32,15 +32,13 @@ FbxLoader::FbxLoader()
 	// create a SdkManager
 	m_fbx_manager = FbxManager::Create();
 	m_fbx_io_settings = FbxIOSettings::Create(m_fbx_manager, IOSROOT);
-	m_importer = FbxImporter::Create(m_fbx_manager, "");
+	m_importer = FbxImporter::Create(m_fbx_manager, "MemoryImporter");
+	m_exporter = FbxExporter::Create(m_fbx_manager, "MemoryExporter");
 }
 
 FbxLoader::~FbxLoader()
 {
 	m_fbx_manager->Destroy();
-	m_fbx_io_settings->Destroy();
-	m_importer->Destroy();
-	m_exporter->Destroy();
 }
 
 FbxScene* FbxLoader::import_from_memory(uint8_t* data, size_t data_size)
@@ -72,8 +70,6 @@ bool FbxLoader::triangulate(FbxScene* scene)
 
 uint8_t* FbxLoader::export_to_memory(FbxScene* scene, size_t& data_size)
 {
-	m_exporter = FbxExporter::Create(m_fbx_manager, "MemoryExporter");
-
 	FbxMemoryStream outputStream(m_fbx_manager);
 	bool succes = m_exporter->Initialize(&outputStream, nullptr, -1, m_fbx_io_settings);
 
