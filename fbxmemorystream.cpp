@@ -78,13 +78,18 @@ bool FbxMemoryStream::Flush()
 
 int32_t FbxMemoryStream::Write(const void *pData, int32_t pSize)
 {
-	const uint8_t* writebuffer = static_cast<const uint8_t*>(pData);
-	for (int32_t i = 0; i < pSize; ++i)
+	if (m_stream_type == WRITE)
 	{
-		m_write_data.push_back(writebuffer[i]);
+		const uint8_t* writebuffer = static_cast<const uint8_t*>(pData);
+		for (int32_t i = 0; i < pSize; ++i)
+		{
+			m_write_data.push_back(writebuffer[i]);
+		}
+		m_stream_position += pSize;
+		return pSize;
 	}
-	m_stream_position += pSize;
-	return pSize;
+
+	return 0;
 }
 
 int32_t FbxMemoryStream::Read(void *pData, int32_t pSize) const

@@ -48,7 +48,6 @@ FbxScene* FbxLoader::import_from_memory(uint8_t* data, size_t data_size)
 
 	FbxMemoryStream memory_stream(m_fbx_manager, data, data_size);
 
-	void* streamData = nullptr;
 	if (!m_importer->Initialize(&memory_stream, nullptr, -1, m_fbx_io_settings))
 	{
 		scene->Destroy();
@@ -60,6 +59,8 @@ FbxScene* FbxLoader::import_from_memory(uint8_t* data, size_t data_size)
 		scene->Destroy();
 		return nullptr;
 	}
+
+	return scene;
 }
 
 bool FbxLoader::triangulate(FbxScene* scene)
