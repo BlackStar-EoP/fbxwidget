@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <stdint.h>
 #include <fbxsdk.h>
+#include <string>
 
 class FbxMemoryStream;
 
@@ -39,6 +40,7 @@ public:
 
 	bool triangulate(FbxScene* scene);
 	uint8_t* export_to_memory(FbxScene* scene, size_t& data_size);
+	bool export_to_file(FbxScene* scene, const std::string& filename);
 
 private:
 	FbxManager* m_fbx_manager = nullptr;

@@ -79,3 +79,12 @@ uint8_t* FbxLoader::export_to_memory(FbxScene* scene, size_t& data_size)
 	data_size = outputStream.data_size();
 	return outputStream.data();
 }
+
+bool FbxLoader::export_to_file(FbxScene* scene, const std::string& filename)
+{
+	FbxExporter* lExporter = FbxExporter::Create(m_fbx_manager, "FileExporter");
+	lExporter->Initialize(filename.c_str(), -1, m_fbx_io_settings);
+	bool succes = lExporter->Export(scene);
+	lExporter->Destroy();
+	return succes;
+}
