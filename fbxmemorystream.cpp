@@ -81,9 +81,20 @@ int32_t FbxMemoryStream::Write(const void *pData, int32_t pSize)
 	if (m_stream_type == WRITE)
 	{
 		const uint8_t* writebuffer = static_cast<const uint8_t*>(pData);
-		for (int32_t i = 0; i < pSize; ++i)
+
+		if (m_stream_position == m_write_data.size())
 		{
-			m_write_data.push_back(writebuffer[i]);
+			for (int32_t i = 0; i < pSize; ++i)
+			{
+				m_write_data.push_back(writebuffer[i]);
+			}
+		}
+		else
+		{
+			for (int32_t i = 0; i < pSize; ++i)
+			{
+				m_write_data[m_stream_position + i] = writebuffer[i];
+			}
 		}
 		m_stream_position += pSize;
 		return pSize;
