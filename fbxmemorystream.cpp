@@ -144,6 +144,14 @@ void FbxMemoryStream::Seek(const FbxInt64 &pOffset, const FbxFile::ESeekPos &pSe
 		break;
 
 	case FbxFile::eEnd:
+		if (m_stream_type == READ)
+		{
+			m_stream_position = m_data_size;
+		}
+		else if (m_stream_type == WRITE)
+		{
+			m_stream_position = m_write_data.size();
+		}
 		break;
 	}
 
