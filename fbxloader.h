@@ -25,7 +25,11 @@ SOFTWARE.
 */
 
 #include <stdint.h>
+
+#pragma warning (push, 0)
 #include <fbxsdk.h>
+#pragma pop
+
 #include <string>
 
 class FbxMemoryStream;
