@@ -45,24 +45,24 @@ public:
 	FbxMemoryStream(fbxsdk::FbxManager* pSdkManager);
 	FbxMemoryStream(fbxsdk::FbxManager* pSdkManager, uint8_t* data, size_t data_size);
 
-	EState 	GetState() override;
-	bool 	Open(void *pStreamData) override;
-	bool 	Close() override;
-	bool 	Flush() override;
-	int32_t Write(const void *pData, int32_t pSize) override;
-	int32_t Read(void *pData, int32_t pSize) const override;
-	int32_t	GetReaderID() const override;
-	int32_t GetWriterID() const override;
-	void 	Seek(const FbxInt64 &pOffset, const FbxFile::ESeekPos &pSeekPos) override;
-	long 	GetPosition() const override;
-	void 	SetPosition(long pPosition) override;
-	int32_t GetError() const override;
-	void 	ClearError() override;
+	EState 	 GetState() override;
+	bool 	 Open(void *pStreamData) override;
+	bool 	 Close() override;
+	bool 	 Flush() override;
+	size_t   Write(const void* pData, FbxUInt64 pSize) override;
+	size_t   Read(void* pData, FbxUInt64 pSize) const override;
+	int32_t	 GetReaderID() const override;
+	int32_t  GetWriterID() const override;
+	void 	 Seek(const FbxInt64 &pOffset, const FbxFile::ESeekPos &pSeekPos) override;
+	FbxInt64 GetPosition() const override;
+	void     SetPosition(FbxInt64 pPosition) override;
+	int32_t  GetError() const override;
+	void 	 ClearError() override;
 
 	uint8_t* data();
 	size_t data_size() const;
 private:
-	mutable long m_stream_position = 0;
+	mutable FbxInt64 m_stream_position = 0;
 	uint8_t* m_data = nullptr;
 	size_t m_data_size = 0;
 	int32_t m_reader_ID = -1;
